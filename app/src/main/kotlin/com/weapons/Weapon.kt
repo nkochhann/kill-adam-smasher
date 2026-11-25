@@ -6,7 +6,7 @@ abstract class Weapon (
     var baseDamage: Int,
     var criticalChance: Int,
     var criticalMultiplier: Int,
-    var handleability: Int,
+    var handleability: Int
 ){
     init {
         if(this.handleability !in 0..5){
