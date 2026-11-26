@@ -1,6 +1,7 @@
 package com.player
 
 import com.game.Combatant
+import com.items.Item
 import com.weapons.DamageRoll
 import com.weapons.Weapon
 import com.weapons.Weapons
@@ -12,30 +13,53 @@ class Player(
     var weapon: Weapon = Weapons.all.first()
 ) : Combatant {
     override var health: Int = maxHealth
-    var attackBonus: Int = 0
+    var damageBonus: Int = 0
+        private set
+    var criticalBonus: Int = 0
         private set
 
-    override val attackModifier: Int get() = weapon.handleability + attackBonus
+    override val attackModifier: Int get() = weapon.handleability
     override var defenseModifier: Int = 0
         private set
 
-    override fun rollDamage(isCritical: Boolean): DamageRoll = weapon.rollDamage(isCritical)
+    override fun rollDamage(isCritical: Boolean): DamageRoll =
+        weapon.rollDamage(isCritical, criticalBonus, damageBonus)
 
     fun addDefense(amount: Int){ defenseModifier += amount }
 
-    fun addAttack(amount: Int) { attackBonus += amount }
+    fun addDamage(amount: Int) { damageBonus += amount }
+
+    fun addCriticalBonus(amount: Int) { criticalBonus += amount }
 
     /** Restores health, never above [maxHealth]. */
     fun heal(amount: Int) { health = minOf(maxHealth, health + amount) }
+
+    /** Pays for and applies [item]. Returns false (and changes nothing) if there are not enough eddies. */
+    fun buy(item: Item): Boolean {
+        if (eddies < item.cost) return false
+        eddies -= item.cost
+        item.use(this)
+        return true
+    }
     
-    fun calculateEddiesIncome(tookDamage: Int, receivedDamage: Int)
+    /** Adds the cycle's income to the eddies and returns the amount earned. */
+    fun calculateEddiesIncome(tookDamage: Int, receivedDamage: Int): Double
     {
-        this.eddies = tookDamage + (receivedDamage * 1.5)
+        val income = tookDamage + (receivedDamage * 1.5)
+        this.eddies += income
+        return income
+    }
+
+    /** Clears every item bonus (damage, defense and critical). */
+    fun resetBonuses() {
+        damageBonus = 0
+        defenseModifier = 0
+        criticalBonus = 0
     }
     
     fun reset() 
     {
         health = maxHealth
-        attackBonus = 0
+        resetBonuses()
     }
 }

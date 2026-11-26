@@ -1,6 +1,7 @@
 package com.game
 
 import com.enemy.AdamSmasher
+import com.items.Items
 import com.player.Player
 import com.weapons.Weapon
 
@@ -21,6 +22,10 @@ class Game {
     private var adamTurnTicks = 0
     private var endTicks = 0
 
+    /** Real HP lost by Adam / by the player during the current V turn + Adam turn cycle. */
+    private var cycleDealt = 0
+    private var cycleReceived = 0
+
     val isOver: Boolean get() = player.isDead() || adam.isDead()
 
     fun startCombat(weapon: Weapon) {
@@ -30,6 +35,8 @@ class Game {
         log.clear()
         lastExchange = null
         endTicks = 0
+        cycleDealt = 0
+        cycleReceived = 0
         log += "${player.name} faces ${adam.name} with ${weapon.name}."
         state = GameState.PLAYER_TURN
     }
@@ -37,7 +44,9 @@ class Game {
     /** Player's attack. If Adam survives, the turn passes to him. */
     fun playerAttack() {
         if (state != GameState.PLAYER_TURN || isOver) return
+        val adamHealthBefore = adam.health
         record(Combat.resolve(player, adam))
+        cycleDealt = adamHealthBefore - adam.health
         if (startEnding()) return
         log += "${adam.name}'s turn."
         adamTurnTicks = ADAM_DELAY_TICKS
@@ -50,6 +59,14 @@ class Game {
 
     fun openWeaponSelect() {
         state = GameState.WEAPON_SELECT
+    }
+
+    /** Buys the shop item at [index]. Stays in the shop and does not spend the player's turn. */
+    fun buy(index: Int) {
+        if (state != GameState.SHOP) return
+        val item = Items.all.getOrNull(index) ?: return
+        log += if (player.buy(item)) "${player.name} bought ${item.name}."
+               else "Not enough eddies for ${item.name}."
     }
 
     /** Starts a new fight with the weapon already chosen. */
@@ -65,13 +82,27 @@ class Game {
     fun tick() {
         adam.update()
         if (state == GameState.ADAM_TURN && --adamTurnTicks <= 0) {
-            if (!isOver) record(Combat.resolve(adam, player))
+            if (!isOver) {
+                val playerHealthBefore = player.health
+                record(Combat.resolve(adam, player))
+                cycleReceived = playerHealthBefore - player.health
+                payCycleIncome()
+            }
             state = GameState.PLAYER_TURN
             startEnding()
         }
         if (endTicks > 0 && --endTicks == 0) {
+            player.resetBonuses()
             state = if (adam.isDead()) GameState.WIN else GameState.GAME_OVER
         }
+    }
+
+    /** Pays the eddies for the finished V turn + Adam turn cycle and starts a new one. */
+    private fun payCycleIncome() {
+        val income = player.calculateEddiesIncome(cycleDealt, cycleReceived)
+        log += "${player.name} earns ${"%.1f".format(java.util.Locale.ROOT, income)} eddies."
+        cycleDealt = 0
+        cycleReceived = 0
     }
 
     /** If someone died, schedules the WIN / GAME_OVER state so the last hit stays visible briefly. */
@@ -91,8 +122,8 @@ class Game {
     }
 
     private companion object {
-        /** ~1 second at 50 ms per frame, so the player sees their own result first. */
-        const val ADAM_DELAY_TICKS = 20
+        /** 2 seconds at 50 ms per frame, so the player sees their own result first. */
+        const val ADAM_DELAY_TICKS = 40
 
         /** ~1.5 seconds before switching to the win / game over screen. */
         const val END_DELAY_TICKS = 30

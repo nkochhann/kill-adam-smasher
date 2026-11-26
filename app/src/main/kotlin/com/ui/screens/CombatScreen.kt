@@ -85,7 +85,6 @@ class CombatScreen(var view: CombatView) : Screen {
 
         // --- Dice boxes, result, status and log, all centered under Adam ---
         val diceH = layout.diceH
-        val logH = LOG_H
         val diceW = minOf(28, (w - 4) / 2)
         val boxGap = 2
         val bw = diceW * 2 + boxGap
@@ -129,7 +128,8 @@ class CombatScreen(var view: CombatView) : Screen {
         tui.drawText(cx, statusY, nums, Theme.WHITE); cx += nums.length + 3
         tui.drawText(cx, statusY, eddies, Theme.YELLOW)
 
-        // --- Compact combat log: last 2 lines, same width as the dice boxes ---
+        // --- Combat log: grows from logY down to one blank row above the buttons (LOG_H rows minimum) ---
+        val logH = maxOf(LOG_H, h - 4 - logY)
         tui.drawThinBox(bx, logY, bw, logH, Theme.DIM)
         v.log.takeLast(logH - 2).forEachIndexed { i, line ->
             tui.drawText(bx + 2, logY + 1 + i, "* " + line.take(bw - 6), Theme.WHITE, Theme.PANEL_BG)

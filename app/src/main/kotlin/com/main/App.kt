@@ -26,7 +26,6 @@ fun runApp() {
         Weapons.all.map { WeaponView(it.name, it.damageNotation, it.criticalMultiplier, it.handleability) }
     )
     val combat = CombatScreen(game.toCombatView())
-    // Placeholder items; purchasing is not implemented yet.
     val shop = ShopScreen(
         Items.all.map { ShopItemView(it.name, it.description, it.cost) },
         game.player.eddies
@@ -64,6 +63,7 @@ fun runApp() {
                     is UiEvent.SelectWeapon -> game.startCombat(Weapons.all[event.index])
                     UiEvent.Fight -> game.playerAttack()
                     UiEvent.OpenShop -> game.openShop()
+                    is UiEvent.Buy -> game.buy(event.index)
                     UiEvent.Retry -> game.restart()
                     UiEvent.Back -> game.back()
                     UiEvent.Quit -> return

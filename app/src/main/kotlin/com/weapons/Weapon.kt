@@ -28,9 +28,13 @@ abstract class Weapon (
     val damageNotation: String
         get() = "${numberOfDamageDices}d${damageDiceSides}"
 
-    /** Rolls the damage dice; a critical hit multiplies the result. */
-    fun rollDamage(isCritical: Boolean): DamageRoll {
+    /**
+     * Rolls the damage dice; a critical hit multiplies the result by the weapon multiplier plus [bonusMultiplier].
+     * [bonusDamage] is added flat after the multiplier.
+     */
+    fun rollDamage(isCritical: Boolean, bonusMultiplier: Int = 0, bonusDamage: Int = 0): DamageRoll {
         val base = Dice(damageDiceSides).roll(numberOfDamageDices)
-        return DamageRoll(if (isCritical) base * criticalMultiplier else base, isCritical)
+        val multiplied = if (isCritical) base * (criticalMultiplier + bonusMultiplier) else base
+        return DamageRoll(multiplied + bonusDamage, isCritical)
     }
 }
