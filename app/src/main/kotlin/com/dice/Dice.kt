@@ -10,7 +10,7 @@ class Dice(
     {
         var result = 0
         
-        for(i in 0..times){
+        repeat(times) {
             result += (1..sides).random()
         }
         

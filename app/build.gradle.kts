@@ -29,6 +29,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // Terminal UI rendering, input and screen management.
+    implementation(libs.lanterna)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
