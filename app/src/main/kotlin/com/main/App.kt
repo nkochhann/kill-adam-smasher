@@ -2,6 +2,7 @@ package com.main
 
 import com.game.Game
 import com.game.GameState
+import com.items.Items
 import com.ui.screens.CombatScreen
 import com.ui.screens.CombatView
 import com.ui.screens.DiceRollView
@@ -27,12 +28,7 @@ fun runApp() {
     val combat = CombatScreen(game.toCombatView())
     // Placeholder items; purchasing is not implemented yet.
     val shop = ShopScreen(
-        listOf(
-            ShopItemView("MaxDoc", "Heals 30 HP", 50.0),
-            ShopItemView("Stimulant", "Temporary attack boost", 80.0),
-            ShopItemView("Subdermal Armor", "+2 defense", 120.0),
-            ShopItemView("Critical Chip", "+1 critical multiplier", 400.0)
-        ),
+        Items.all.map { ShopItemView(it.name, it.description, it.cost) },
         game.player.eddies
     )
 

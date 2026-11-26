@@ -3,6 +3,8 @@ package com.ui.sprites
 import com.googlecode.lanterna.TextColor
 import com.ui.tui.Theme
 import com.ui.tui.Tui
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /** Pixel grid of ARGB ints. Alpha 0 = transparent. */
 class Sprite(val width: Int, val height: Int, private val pixels: IntArray) {
@@ -16,8 +18,8 @@ class Sprite(val width: Int, val height: Int, private val pixels: IntArray) {
     /** Nearest-neighbor resize. The result height is kept even so half-blocks pair up. */
     fun scaled(factor: Double): Sprite {
         if (factor == 1.0) return this
-        val nw = Math.round(width * factor).toInt().coerceAtLeast(1)
-        var nh = Math.round(height * factor).toInt().coerceAtLeast(2)
+        val nw = (width * factor).roundToInt().coerceAtLeast(1)
+        var nh = (height * factor).roundToInt().coerceAtLeast(2)
         if (nh % 2 != 0) nh++
         val out = IntArray(nw * nh)
         for (y in 0 until nh) {

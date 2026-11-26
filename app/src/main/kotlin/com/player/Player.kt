@@ -12,12 +12,22 @@ class Player(
     var weapon: Weapon = Weapons.all.first()
 ) : Combatant {
     override var health: Int = maxHealth
+    var attackBonus: Int = 0
+        private set
 
-    override val attackModifier: Int get() = weapon.handleability + 2
-    override val defenseModifier: Int get() = 3
+    override val attackModifier: Int get() = weapon.handleability + attackBonus
+    override var defenseModifier: Int = 0
+        private set
 
     override fun rollDamage(isCritical: Boolean): DamageRoll = weapon.rollDamage(isCritical)
 
+    fun addDefense(amount: Int){ defenseModifier += amount }
+
+    fun addAttack(amount: Int) { attackBonus += amount }
+
+    /** Restores health, never above [maxHealth]. */
+    fun heal(amount: Int) { health = minOf(maxHealth, health + amount) }
+    
     fun calculateEddiesIncome(tookDamage: Int, receivedDamage: Int)
     {
         this.eddies = tookDamage + (receivedDamage * 1.5)
@@ -26,5 +36,6 @@ class Player(
     fun reset() 
     {
         health = maxHealth
+        attackBonus = 0
     }
 }

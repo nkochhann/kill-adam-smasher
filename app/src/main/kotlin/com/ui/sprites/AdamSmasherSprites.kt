@@ -55,31 +55,30 @@ object AdamSmasherSprites {
 
     private fun standing(bob: Int, eye: Int, dx: Int = 0, flash: Boolean = false): Sprite {
         val c = Canvas()
-        val o = dx
         // legs (static)
-        c.rect(10 + o, 22, 14 + o, 30, STEEL); c.rect(18 + o, 22, 22 + o, 30, STEEL)
-        c.rect(9 + o, 29, 14 + o, 31, DARK); c.rect(18 + o, 29, 23 + o, 31, DARK)
+        c.rect(10 + dx, 22, 14 + dx, 30, STEEL); c.rect(18 + dx, 22, 22 + dx, 30, STEEL)
+        c.rect(9 + dx, 29, 14 + dx, 31, DARK); c.rect(18 + dx, 29, 23 + dx, 31, DARK)
         // pelvis
-        c.rect(11 + o, 20 + bob, 21 + o, 22, DARK)
+        c.rect(11 + dx, 20 + bob, 21 + dx, 22, DARK)
         // torso
-        c.rect(9 + o, 11 + bob, 22 + o, 20 + bob, STEEL)
-        c.rect(13 + o, 13 + bob, 18 + o, 17 + bob, DARK)
-        c.rect(15 + o, 14 + bob, 16 + o, 16 + bob, GLOW) // reactor core
+        c.rect(9 + dx, 11 + bob, 22 + dx, 20 + bob, STEEL)
+        c.rect(13 + dx, 13 + bob, 18 + dx, 17 + bob, DARK)
+        c.rect(15 + dx, 14 + bob, 16 + dx, 16 + bob, GLOW) // reactor core
         // shoulders
-        c.rect(4 + o, 9 + bob, 10 + o, 13 + bob, CHROME); c.rect(21 + o, 9 + bob, 27 + o, 13 + bob, CHROME)
+        c.rect(4 + dx, 9 + bob, 10 + dx, 13 + bob, CHROME); c.rect(21 + dx, 9 + bob, 27 + dx, 13 + bob, CHROME)
         // arms (left fist, right heavy cannon)
-        c.rect(4 + o, 14 + bob, 7 + o, 22 + bob, STEEL); c.rect(3 + o, 22 + bob, 8 + o, 24 + bob, DARK)
-        c.rect(24 + o, 14 + bob, 28 + o, 20 + bob, STEEL); c.rect(24 + o, 21 + bob, 30 + o, 25 + bob, DARK)
-        c.rect(29 + o, 22 + bob, 31, 23 + bob, GLOW)
+        c.rect(4 + dx, 14 + bob, 7 + dx, 22 + bob, STEEL); c.rect(3 + dx, 22 + bob, 8 + dx, 24 + bob, DARK)
+        c.rect(24 + dx, 14 + bob, 28 + dx, 20 + bob, STEEL); c.rect(24 + dx, 21 + bob, 30 + dx, 25 + bob, DARK)
+        c.rect(29 + dx, 22 + bob, 31, 23 + bob, GLOW)
         // head: chrome skull
-        c.rect(12 + o, 2 + bob, 19 + o, 9 + bob, CHROME)
-        c.rect(13 + o, 10 + bob, 18 + o, 10 + bob, STEEL) // neck
-        c.rect(13 + o, 7 + bob, 18 + o, 9 + bob, STEEL)   // jaw
-        c.rect(13 + o, 4 + bob, 14 + o, 6 + bob, DARK)    // left socket
-        c.rect(17 + o, 4 + bob, 18 + o, 6 + bob, eye)     // cyber eye
+        c.rect(12 + dx, 2 + bob, 19 + dx, 9 + bob, CHROME)
+        c.rect(13 + dx, 10 + bob, 18 + dx, 10 + bob, STEEL) // neck
+        c.rect(13 + dx, 7 + bob, 18 + dx, 9 + bob, STEEL)   // jaw
+        c.rect(13 + dx, 4 + bob, 14 + dx, 6 + bob, DARK)    // left socket
+        c.rect(17 + dx, 4 + bob, 18 + dx, 6 + bob, eye)     // cyber eye
         if (flash) {
             c.tint(argb(255, 120, 130)) // red-white flash silhouette
-            c.rect(17 + o, 4 + bob, 18 + o, 6 + bob, WHITE) // keep the eye visible
+            c.rect(17 + dx, 4 + bob, 18 + dx, 6 + bob, WHITE) // keep the eye visible
         }
         return Sprite(SIZE, SIZE, c.px)
     }
